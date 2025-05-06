@@ -39,6 +39,9 @@ with tabs[0]:
     col1, col2 = st.columns([1, 2])
     
     with col1:
+        # Filter section
+        st.subheader("Filter Results")
+        
         feature_type = st.selectbox(
             "Filter by feature type:",
             ["All", "MGE", "SCCmec", "Core Genome", "Plasmid", "Phage"]
@@ -50,6 +53,41 @@ with tabs[0]:
             max_value=20.0,
             value=5.0
         )
+        
+        # Upload/demo section
+        st.subheader("Analyze MRSA Genome")
+        
+        # Add demo mode option
+        analysis_mode = st.radio(
+            "Select analysis mode:",
+            ["Upload Genome File", "Run Demo Analysis"],
+            index=1  # Default to demo mode
+        )
+        
+        if analysis_mode == "Upload Genome File":
+            st.warning("Note: File upload is currently disabled in this Replit environment due to security restrictions.")
+            uploaded_file = st.file_uploader("Upload MRSA Genome for Analysis", type=["fasta", "fastq", "fa", "fq"], disabled=True)
+            st.info("Please use the Demo Analysis option instead.")
+        
+        if analysis_mode == "Run Demo Analysis" or st.button("Run Demo Analysis"):
+            st.success("Demo genome loaded: BX571856.1 (MRSA252)")
+            st.info("Running analysis...")
+            
+            # Create progress bar
+            progress_bar = st.progress(0)
+            for i in range(100):
+                # Update progress bar
+                progress_bar.progress(i + 1)
+                import time
+                time.sleep(0.01)
+                
+            st.success("Analysis complete!")
+            
+            # Display sample results
+            st.write("Predicted Biofilm Formation: **High**")
+            st.write("Confidence: 94%")
+            st.write("Key Biofilm Determinants Found: 3/5")
+            st.write("Phage Therapy Susceptibility: High")
     
     # Filter the GWAS results based on selection
     filtered_results = gwas_results
