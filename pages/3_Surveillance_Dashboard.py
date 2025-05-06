@@ -343,7 +343,7 @@ with tabs[2]:
         calculate_button = st.button("Calculate Optimal Cocktail")
     
     with col2:
-        if calculate_button or True:  # Always show for demonstration
+        if calculate_button:
             # Calculate phage coverage and recommended cocktail
             coverage_matrix, recommended_cocktail = calculate_phage_coverage(
                 phage_data, 
@@ -367,27 +367,37 @@ with tabs[2]:
             st.dataframe(cocktail_df)
             
             # Display total coverage
-            total_coverage = sum([comp["coverage"] for comp in recommended_cocktail]) / len(recommended_cocktail)
-            st.metric("Total Lineage Coverage", f"{total_coverage*100:.1f}%")
+            if recommended_cocktail:
+                total_coverage = sum([comp["coverage"] for comp in recommended_cocktail]) / len(recommended_cocktail)
+                st.metric("Total Lineage Coverage", f"{total_coverage*100:.1f}%")
+            else:
+                st.warning("No suitable therapeutic components found for the selected lineages. Try selecting different lineages or adjusting the coverage threshold.")
             
             # Create coverage heatmap
             st.subheader("Coverage Matrix")
             
             # Convert coverage matrix to DataFrame for heatmap
-            coverage_df = pd.DataFrame(coverage_matrix)
-            
-            # Create heatmap
-            fig = px.imshow(
-                coverage_df,
-                labels=dict(x="Therapeutic Agent", y="MRSA Lineage", color="Coverage (%)"),
-                x=coverage_df.columns,
-                y=coverage_df.index,
-                color_continuous_scale="Viridis",
-                title=f"{therapy_type} Coverage Matrix for Selected Lineages"
-            )
-            
-            fig.update_layout(height=500)
-            st.plotly_chart(fig, use_container_width=True)
+            if coverage_matrix and target_lineages:
+                coverage_df = pd.DataFrame(coverage_matrix)
+                
+                # Only proceed if the coverage matrix has data
+                if not coverage_df.empty and not coverage_df.columns.empty:
+                    # Create heatmap
+                    fig = px.imshow(
+                        coverage_df,
+                        labels=dict(x="Therapeutic Agent", y="MRSA Lineage", color="Coverage (%)"),
+                        x=coverage_df.columns,
+                        y=coverage_df.index,
+                        color_continuous_scale="Viridis",
+                        title=f"{therapy_type} Coverage Matrix for Selected Lineages"
+                    )
+                    
+                    fig.update_layout(height=500)
+                    st.plotly_chart(fig, use_container_width=True)
+                else:
+                    st.info("Not enough data to display coverage matrix. Try selecting different lineages or therapy types.")
+            else:
+                st.info("No coverage data available. Try selecting different lineages or therapy types.")
     
     # Display information about therapeutic coverage
     st.markdown("""

@@ -84,8 +84,17 @@ def recommend_phage_cocktail(coverage_matrix, target_lineages, coverage_threshol
     selected_components = []
     covered_lineages = set()
     
+    # If no target lineages are provided, return empty list
+    if not target_lineages:
+        return []
+    
     # Greedy algorithm - select components until we reach the coverage threshold
-    while len(covered_lineages) < len(target_lineages) * coverage_threshold:
+    # Ensure we don't enter an infinite loop if coverage cannot be improved
+    max_iterations = len(coverage_matrix) + 1  # Set a maximum number of iterations
+    iteration_count = 0
+    
+    while len(covered_lineages) < len(target_lineages) * coverage_threshold and iteration_count < max_iterations:
+        iteration_count += 1
         # Find the component with the highest coverage of remaining lineages
         best_component = None
         best_coverage = 0
