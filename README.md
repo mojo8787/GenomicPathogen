@@ -115,7 +115,21 @@ This project is designed to integrate with Prof. Papp's lab infrastructure:
 3. **Computational Resources**: Optimized for HPC cluster and GPU nodes
 4. **Data Pipeline**: Integrates with existing genomic data processing workflows
 
+For a detailed mapping of how this project aligns with EMBO Fellowship criteria and Prof. Papp's research focus, see [EMBO_CRITERIA.md](EMBO_CRITERIA.md).
+
 ## Future Directions
+
+### Development Roadmap
+
+| Component | Status | Action Item |
+|-----------|--------|-------------|
+| Real Data | ❌ | Add 100 NCBI genomes + PATRIC phenotypes |
+| Lab Tool Integration | ❌ | Fork/PR Prof. Papp's repos (e.g., TreeTime) |
+| Performance Metrics | ❌ | Add HPC benchmarks |
+| Validation | ❌ | Simulate CRISPRi results |
+| EMBO Mapping | ✅ | Add criteria table to README (see EMBO_CRITERIA.md) |
+
+### Planned Enhancements
 
 1. **Real-time Data Integration**: Connection to live genomic surveillance data feeds
 2. **Enhanced ML Models**: Integration of transformer-based genomic language models
