@@ -2,6 +2,8 @@
 
 This document outlines how the MRSA Biofilm Surveillance Dashboard project aligns with EMBO Fellowship criteria and integrates with Prof. Papp's lab research focus.
 
+**Author**: Dr. Almotasem Bellah Younis, PhD | [Website](https://almotasem-younis.netlify.app)
+
 ## EMBO Fellowship Criteria Mapping
 
 | EMBO Criteria | Project Alignment | Implementation Notes |

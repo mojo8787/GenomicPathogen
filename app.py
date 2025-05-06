@@ -142,7 +142,7 @@ if uploaded_file is not None:
 # Footer with attribution
 st.markdown("---")
 st.markdown("""
-**Dashboard Author**: [Your Name]  
+**Dashboard Author**: Dr. Almotasem Bellah Younis, PhD | [Website](https://almotasem-younis.netlify.app)  
 **Proposal**: AI-Driven Genomic Surveillance and Mechanistic Inference of High-Biofilm MRSA Lineages  
 **Target Host Lab**: Prof. Balázs Papp's Group at HUN-REN BRC, Szeged
 """)

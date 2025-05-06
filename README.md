@@ -140,12 +140,19 @@ For a detailed mapping of how this project aligns with EMBO Fellowship criteria 
 
 This dashboard is a proof-of-concept implementation based on the research proposal developed for application to Prof. Papp's lab. It builds upon approaches from genomic surveillance, machine learning for bacterial genomics, and precision antimicrobial development.
 
+## Author
+
+This dashboard was developed by:
+
+**Dr. Almotasem Bellah Younis, PhD**  
+Website: [https://almotasem-younis.netlify.app](https://almotasem-younis.netlify.app)
+
 ## Citation
 
 If you use this dashboard or the underlying methodologies, please cite:
 
 ```
-Smith, J. (2023). AI-Driven Genomic Surveillance and Mechanistic Inference of High-Biofilm MRSA Lineages 
+Younis, A.B. (2023). AI-Driven Genomic Surveillance and Mechanistic Inference of High-Biofilm MRSA Lineages 
 for Precision Antibiofilm Therapeutics. Journal of Bioinformatics and Genomic Epidemiology.
 ```
 
