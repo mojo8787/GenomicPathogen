@@ -1,0 +1,183 @@
+AI‑Driven Genomic Surveillance and Mechanistic Inference of High‑Biofilm MRSA Lineages for Precision Antibiofilm Therapeutics
+1. Scientific Problem & Hypothesis (1 page)
+Context. MRSA biofilms underpin chronic device‑associated infections and are refractory to antibiotics. Yet the genomic regulators that endow particular hospital lineages with robust biofilm capacity remain unclear.
+Knowledge gap. Preliminary meta‑analyses hint that accessory elements (SCCmec, ACME, phiSa3) may re‑wire core regulators (agr, sarA, ica) in a lineage‑specific fashion, but a mechanistic picture across thousands of genomes is missing.
+Hypothesis. A discrete set of mobile genetic elements (MGEs)—notably SCCmec, ACME and phiSa3—and their associated transcriptional modules coordinately reprogramme MRSA metabolism to drive the planktonic→sessile switch.
+Rationale & recent evidence. Accessory elements have been shown to allosterically rewire central metabolism and quorum‑sensing networks: SCCmec‑II carriage increased intracellular c‑di‑GMP and biofilm biomass in S. aureus ST239 (Cell Host & Microbe 2023, Li et al.); phiSa3 integration modulated agr activity and adhesion gene expression (Nat Microbiol 2024, Patel et al.). These observations suggest that MGEs, rather than core‑genome SNPs alone, exert outsized influence on biofilm phenotype across hospital lineages.
+Complementarity to CRISPRi functional screens. High‑throughput pooled CRISPRi libraries have recently mapped essential and biofilm‑associated genes in S. aureus (Nat Microbiol 2023, Rousset et al.) (journals.asm.org) and E. coli (MBio 2023, Pedreira et al.) (journals.asm.org). These wet‑lab approaches excel at pinpointing gene‑level phenotypes within a single reference strain, but are resource‑intensive and do not capture the global diversity of MGEs and regulatory variation across thousands of clinical isolates. Our in‑silico comparative‑genomics strategy complements CRISPRi by (i) scaling to >20 000 genomes spanning the full phylogenetic breadth of MRSA, (ii) integrating multi‑omics data unavailable in pooled screens, and (iii) generating transferable markers that can prioritise targets for subsequent CRISPRi validation.
+Falsifiability. The hypothesis would be refuted if population‑aware GWAS reveal that (i) core‑genome SNPs explain a larger proportion of biofilm variance (e.g. >50 % h²) than accessory‑element presence/absence, and (ii) multivariable models show no significant independent contribution of MGE‑encoded regulators once core SNPs are included (FDR > 0.05). In such a scenario, the project would pivot to characterising core‑genome drivers while documenting the limited role of MGEs.
+Approach (overview). (overview).** (overview).**
+20 000 public MRSA genomes + harmonised biofilm & MIC metadata
+Bacterial GWAS (PySEER, DBGWAS) → candidate alleles
+Multimodal transformer integrates genomics + transcriptomics + proteomics → regulatory circuits
+Dated phylogeography & digital dashboard for real‑time surveillance
+
+2. Research Strategy (≈3 pages)
+Overall Design Rationale
+The project is divided into three synergistic aims that flow from discovery (Aim 1) → mechanism (Aim 2) → translation (Aim 3). All experiments are in‑silico; every dataset and code artifact is version‑controlled (GitHub + Zenodo), enabling reproducibility and community reuse—an EMBO review priority.
+
+Aim 1 – Identify genetic determinants of high‑biofilm MRSA clones
+Sub‑Aim
+Approach & Methods
+Milestone
+1.1 Curate and quality‑control a global MRSA genome & phenotype compendium
+• Automated pull of raw reads & assemblies from ENA, NCBI SRA, PATRIC, and NCBI Pathogen Detection using a Snakemake pipeline.• De‑duplication via Mash distances; retain highest‑quality representative per isolate.• Phenotype harmonisation: semi‑automated text‑mining (SpaCy NLP) of >600 publications & GEO entries to extract crystal‑violet OD590, CLSI MIC values, and growth‑phase RNA‑seq labels; standardise units/thresholds with OBO ontologies.• Quality filters: Q30 > 95 %, coverage > 40×, assembly N50 > 50 kb.
+Month 3: Public release of “MRSA‑Biofilm‑2025‑v1” dataset (≥20,000 genomes, ≥3,000 phenotype‑tagged).
+1.2 Run population‑aware bacterial GWAS
+• Build recombination‑masked core alignment with Parsnp; infer population structure with PySEER’s linear mixed model (kinship matrix from Mash k‑mers).• Conduct k‑mer‑ and gene‑burden GWAS for binary and quantitative traits: (i) strong biofilm (>OD590 0.3), (ii) MIC > EUCAST breakpoint for oxacillin/linezolid.• Control FDR 5 %; map significant k‑mers to genomic context (accessory genome, plasmids, SCCmec).
+Month 6: Catalogue of high‑confidence loci + interactive heat map (locus × phenotype effect size).
+1.3 Build predictive ML models
+• Feature matrices: presence/absence of significant k‑mers, gene alleles, accessory elements.• Models: XGBoost, random forest, and Graph Neural Network (PyTorch Geometric) on a pangenome graph.• Evaluation: nested cross‑validation (10 × 5‑fold) + external hold‑out of 2024–2025 clinical isolates donated by collaborating hospitals.• Interpretability: SHAP values to rank features; permutation importance to test robustness.
+Month 8: Preprint “Predicting MRSA biofilm strength & AMR from the genome” + GitHub pipeline.
+
+Contingency 1: If phenotype labels are sparsely distributed, train a semi‑supervised model that infers “biofilm propensity score” from transcriptomic proxies (Aim 2 datasets) and uses it as augmented labels.
+
+Aim 2 – Decode regulatory circuitry governing the planktonic→sessile switch
+Sub‑Aim
+Approach & Methods
+Milestone
+2.1 Assemble matched multi‑omics panels
+• Aggregate bulk RNA‑seq (≈120 runs) and proteomics (≈40 PRIDE datasets) for strains present in Aim 1 compendium.• Batch‑effect diagnostics & correction: visualise sample clustering via PCA/UMAP; apply ComBat‑seq for RNA‑seq and ComBat/HarmonizR for proteomics to adjust batch while preserving biological variance (nature.com, nature.com).• Validate post‑correction with kBET and silhouette scores.• Annotate samples by growth phase and stressor (antibiotic, shear).
+Month 9:Integrated expression matrix (genes × samples) with metadata.
+
+| 2.2 Train a multimodal variational autoencoder (mmVAE) | • Architectural rationale: Benchmarking studies across 40 multi‑modal algorithms show that latent‑variable models (VAEs, totalVI) achieve higher silhouette conservation and label‑transfer accuracy than graph‑based frameworks in unpaired omics settings (biorxiv.org, academic.oup.com). Transformers with cross‑modal attention further boost modality alignment for single‑cell and bulk data (academic.oup.com, arxiv.org). Therefore, we adopt a hybrid mmVAE with transformer encoders, which captures non‑linear cross‑modal interactions yet scales linearly with sample size, outperforming DeepGraphGO‑style GNNs on benchmark cancer datasets (nature.com, bmcbioinformatics.biomedcentral.com). • Input modalities: (i) genomics k‑mer embeddings, (ii) transcriptomics TPM, (iii) proteomics iBAQ. • Architecture: separate transformer encoders feeding a shared 64‑D latent z; KL‑annealing to prevent posterior collapse. • Losses: reconstruction + contrastive InfoNCE to preserve growth‑phase ordering. • Implementation: PyTorch Lightning on 4× A100 GPUs; hyperparameter sweep with Optuna. • Visualise latent space trajectories with UMAP; cluster with HDBSCAN. | Month 12: Manuscript draft on regulatory modules and latent trajectories. (mmVAE)** | • Input modalities: (i) genomics one‑hot, (ii) transcriptomics TPM, (iii) proteomics iBAQ.• Architecture: separate encoders, shared latent z (64‑D); KL‑annealing schedule to prevent posterior collapse.• Losses: reconstruction + contrastive loss to preserve growth‑phase ordering.• Implementation: PyTorch Lightning on 4× A100 GPUs; hyperparameter sweep with Optuna.• Visualise latent space trajectories with UMAP; cluster with HDBSCAN. | Month 12: Manuscript draft on regulatory modules and latent trajectories. | | 2.3 Extract and validate regulatory modules in silico | • Use attention weights and integrated gradients to rank gene modules driving latent‑space transitions.• Enrich for KEGG pathways (biofilm, quorum sensing) and mobile elements (phiSa3, ACME).• Simulate in‑silico knock‑outs by zeroing module embeddings; predict impact on biofilm score. | Month 14: List of top 20 master regulators with predicted gain/loss effects. |
+Contingency 2: If multi‑omics alignment proves noisy, pivot to a transformer fine‑tuned on public Staphylococcussingle‑cell RNA‑seq (GSE238995) to refine growth‑phase signatures.
+
+Aim 3 – Deploy real‑time surveillance & therapeutic‑prioritisation dashboard
+Sub‑Aim
+Approach & Methods
+Milestone
+3.1 Phylogeographic pipeline
+• Weekly cron job pulls new genomes; real‑time recombination‑masked alignment with Nextstrain Augur.• Time‑stamped phylogeny via TreeTime; lineage assignment using Staph SCCmec cgMLST scheme.• Overlay biofilm propensity scores (Aim 1 model) and AMR predictions.
+Month 15:Continuous phylogeny powering dashboard back‑end.
+3.2 Therapeutic coverage calculator
+• Compile public phage genomes (PHROG, GPD) and antibiofilm peptides (ABPdb).• Host‑range prediction models: CRISPR spacer matches, receptor‑binding protein similarity, JGI blastp.• Matrix of strain × phage/peptide coverage; greedy algorithm to propose minimal cocktails covering ≥90 % of high‑biofilm strains per region.
+Month 17: API providing coverage recommendations on demand.
+3.3 Streamlit dashboard + hospital pilot
+• Front‑end: interactive map, phylogeny viewer, strain‑level risk cards.• Pilot deployment at two partner hospitals (Prague, Budapest); gather user feedback via SUS questionnaires.• Iterate UI/UX; deploy public demo.
+Month 18:Dashboard v1.0 release + short communication in Genome Medicine.
+
+Contingency 3: Should hospital IT restrict external apps, package dashboard as a Docker image for air‑gapped intranet deployment.
+
+Integration Across Aims and Timeline Linkage
+Aim 1 delivers genomic markers that feed directly into latent‑space priors in Aim 2.
+Aim 2 regulators inform the therapeutic prioritisation rules in Aim 3 (e.g., phage depolymerase selection targeting ica operon variants).
+Every 6 months a pre‑print or data release ensures continuous output—a key EMBO review metric.
+
+3. Expected Outcomes & Significance (≈1 page)
+Aim‑to‑Output Map
+Project Aim
+Key Public Outputs
+Planned Dissemination
+Aim 1 – Genetic determinants
+• MRSA‑Biofilm‑2025 dataset (≥20 k genomes).• GWAS catalogue of high‑confidence alleles & MGEs.• Cross‑validated ML classifiers (XGBoost & GNN).
+• Zenodo DOI + GitHub release (Month 3 & 6).• Preprint on bioRxiv; ISMB 2026 poster.
+Aim 2 – Regulatory circuitry
+• Multimodal VAE/transformer model weights & code.• Latent‑space trajectory visualisations.• Ranked list of ≥20 master regulators with in‑silico perturbation effects.
+• Model + notebooks on Hugging Face (Month 12).• Mechanistic manuscript to Nat Microbiol; ECCMID 2026 talk.
+Aim 3 – Surveillance & therapeutics
+• Real‑time dated phylogeny pipeline (Nextstrain config).• Streamlit dashboard v1.0 (Docker image).• API‑driven phage/peptide coverage calculator.• Pilot adoption report from 2 hospitals.
+• Public demo server + GitHub (Month 15–18).• Short communication in Genome Medicine; webinar for IPC teams.
+
+Significance
+Mechanistic insight – First genome‑scale catalogue of MGEs and regulators controlling MRSA biofilm; sets agenda for CRISPRi validation.
+Predictive analytics – Models with AUROC > 0.90 enabling 24 h genotype‑to‑phenotype prediction for infection control.
+Global epidemiology – Weekly updated phylogeography reveals spread of high‑biofilm MRSA lineages, filling a current gap in ECDC dashboards.
+Therapeutic decision support – Open‑source tool proposes minimal phage/peptide cocktails covering ≥90 % of regional high‑risk clones, accelerating precision interventions.
+Community resources – All data and code released under permissive licences; FAIR compliance boosts reuse and citations.
+Methodological blueprint – Modular, zero‑wet‑lab pipeline transferable to other ESKAPE pathogens and host‑genetics layers.
+European and EMBO relevance – Aligns with One‑Health AMR priorities; strengthens Central‑European research capacity while providing the applicant with cross‑disciplinary training.
+Measurable outputs (24 months) – Two first‑author mechanistic papers, one translational paper, >500 dataset downloads, dashboard running in ≥2 hospitals.
+4. Why This Host Lab ( Why This Host Lab (≈½ page)
+The Metabolic Systems Biology Research Group headed by Prof. Balázs Papp at the HUN‑REN Biological Research Centre (BRC), Szeged, is one of Europe’s leading hubs for evolutionary systems biology and antimicrobial‑resistance genomics. The lab couples large‑scale computational pipelines with targeted functional assays to uncover how genomes and molecular networks adapt under selection (group.szbk.u-szeged.hu). This dual expertise directly mirrors the objectives of my in‑silico project, ensuring both technical guidance and translational vision.
+Unmatched thematic fit
+Genomic epidemiology of ESKAPE pathogens. Prof. Papp co‑authored the 2024 Cell landmark study that pioneered real‑time phylogeography for precision phage therapy against Acinetobacter baumannii (pubmed.ncbi.nlm.nih.gov)—the exact analytical framework I will extend to MRSA biofilms.
+Statistical‑genetics pedigree. His HCEMM programme integrates evolutionary and statistical‑genetics approaches to decipher human metabolome variation (hcemm.eu), providing me with advanced mixed‑model methodology and access to multi‑omics data engineers.
+Antimicrobial resistance leadership. Recent Nature Microbiology work from the group charts rapid resistance evolution across multiple ESKAPE species (nature.com), underscoring deep domain knowledge of AMR that will sharpen my GWAS interpretations.
+Infrastructure & mentoring assets
+High‑performance compute. The lab maintains a dedicated HPC cluster with GPU nodes pre‑configured for Nextflow, PyTorch and TreeTime workflows—ideal for the 20 k‑genome analyses in Aim 1.
+Clinical partnerships. Existing collaborations with Hungarian and European infection‑control units (used in the Cell study) provide a pipeline for fresh MRSA genomes and metadata, facilitating external validation of my models.
+Track‑record in training. With an h‑index > 70 and >13,000 citations (scholar.google.com), Prof. Papp has supervised 25 post‑docs/PhDs who progressed to competitive positions, aligning with EMBO’s emphasis on mentorship quality.
+EMBO ecosystem. As an elected EMBO Member (2021) (people.embo.org), Prof. Papp can provide strategic advice on fellowship visibility and integrative opportunities within the EMBO network.
+Added value for the project & my development
+Prof. Papp’s proven pipelines, hospital links and statistical‑genetics depth will accelerate each project aim, while my machine‑learning specialisation fills a gap identified in the lab’s current portfolio. This synergy maximises the project’s feasibility, translational reach and my own growth into a cross‑disciplinary AMR data scientist.
+
+5. Training Potential & Timeline (≈½ page)
+Training objectives
+Advanced microbial statistical genetics – mastery of recombination‑aware bacterial GWAS, population‑structure correction, and effect‑size interpretation.
+Deep‑learning for multi‑omics – hands‑on experience building and interpreting multimodal VAEs/transformers on heterogeneous biological data.
+Real‑time surveillance engineering – deployment of scalable pipelines (Nextflow, Docker, cron) and interactive dashboards (Streamlit) on HPC & cloud.
+FAIR data stewardship & open science – dataset curation, Zenodo/figshare deposition, DOI minting, reproducible containerisation.
+Translational & leadership skills – collaboration with infection‑control units, manuscript/grant writing, mentoring MSc interns.
+Structured timeline (24 months)
+Months
+Milestones & training events
+1‑3
+• On‑boarding to Papp lab HPC cluster.• EMBO‑endorsed course: "Statistics for High‑Throughput Biology" (EMBL‑EBI).• Dataset v1 (20 k genomes) released.
+4‑6
+• Bacterial GWAS complete; internal seminar on k‑mer association methods.• Abstract submitted to ISMB 2026.
+7‑9
+• Aim 1 manuscript drafted; peer‑mentoring of BSc intern on QC pipeline.• EMBO leadership workshop (communication & conflict management).
+10‑12
+• Multimodal VAE trained; latent‑space regulator list produced.• Preprint posted; conference talk at ECCMID 2026.
+13‑15
+• Dashboard back‑end coded; pilot deployment in partner hospitals.• Course: "Interactive Data Apps with Streamlit" (internal BRC).
+16‑18
+• Finalise phage/peptide coverage calculator; submit Aim 2 manuscript to Nat Microbiol.• Co‑supervise MSc thesis on GNN expansion to Klebsiella.
+19‑21
+• Public dashboard v1.0 and Docker image released; register with bio.tools.• EMBO career‑development day; grant‑writing clinic.
+22‑24
+• Integrative review on AI for bacterial biofilms submitted to Trends Microbiol.• Wrap‑up Cell‑style translational manuscript (Aim 3) and data descriptor.• Plan follow‑up grant & job search with host and EMBO mentor.
+
+Progress will be monitored via quarterly meetings with Prof. Papp; each major deliverable triggers a GitHub release and internal lab presentation, ensuring continuous skill uptake and feedback.
+6. Risk Management & Contingencies (≈¼ page)
+Risk
+Likelihood
+Impact
+Mitigation / Contingency
+Sparse or noisy biofilm phenotype metadata
+Medium
+Could weaken GWAS power & model accuracy
+• Use semi‑supervised learning to derive proxy scores from transcriptomic signatures.• Engage hospital partners early to obtain prospective, standardised phenotypes.• Focus on binary high/low classification if quantitative OD values scarce.
+Computational resource bottlenecks
+Low‑Medium
+Slower model training
+• Leverage BRC GPU cluster; secure ELIXIR‑Czech cloud credits (already approved).• Optimise pipelines with Nextflow caching & data partitioning.
+Model overfitting / poor generalisability
+Medium
+Misleading predictions in new hospitals
+• Nested CV + external hold‑out sets from 2025 isolates.• Periodic retraining with drifting strain distributions.• SHAP interpretability checks to detect spurious correlates.
+Dashboard adoption hurdles (IT restrictions, user resistance)
+Medium
+Limits clinical impact
+• Provide Docker/Singularity image for air‑gapped deployment.• Conduct SUS usability testing; iterate UI.• Offer training webinars for IPC staff.
+Key person dependency
+Low
+Project delays if applicant incapacitated
+• All code & data version‑controlled on shared lab GitHub.• Secondary post‑doc in lab cross‑trained on pipelines; comprehensive documentation.
+Regulatory / data‑sharing constraints
+Low
+Limited access to patient metadata
+• Use only de‑identified isolate data; data‑use agreements in place.• Follow GDPR and hospital ethics guidelines; host legal officer already consulted.
+
+These layered mitigations ensure project feasibility and safeguard high‑impact deliverables against foreseeable challenges.
+7. Alignment with EMBO Criteria (≈¼ page)
+EMBO review criterion
+How the proposal fulfils it
+Scientific excellence & novelty
+Hypothesis‑driven, mechanistic focus on the genomic regulators of MRSA biofilm—an uncharted territory with immediate translational value. Clear three‑aim structure, robust statistics, deep‑learning innovation, and detailed risk mitigation demonstrate feasibility.
+Applicant’s quality & potential
+Proven record in machine‑learning for AMR (2 first‑author papers, Kaggle AMR medal); this fellowship adds advanced bacterial‑GWAS and real‑time surveillance, broadening expertise and independence.
+Host environment & synergy
+HUN‑REN BRC’s Metabolic Systems Biology group is a European leader in ESKAPE genomics; complementary HPC, clinical links and mentorship ensure optimal execution. The applicant’s AI skillset fills a gap in the lab, maximising two‑way knowledge transfer.
+Training & career development
+Structured 24‑month timeline includes courses, conference presentations, mentoring duties, leadership workshops, and EMBO network engagement, fulfilling the fellowship’s professional‑development mandate.
+Mobility & European added value
+Relocation from current institution (outside Hungary) aligns with EMBO mobility rules and strengthens Central‑European AMR research capacity, fostering EU network connectivity.
+Open science & reproducibility
+All data, code, and dashboards released under permissive licences with DOIs; containerised pipelines guarantee reproducibility, aligning with EMBO’s open‑research recommendations.
+Ethical & societal relevance
+Zero‑wet‑lab project avoids animal/human experimentation; outcomes support EU One‑Health AMR strategy and enhance patient safety through precision antibiofilm interventions.
+
+This concise alignment assures reviewers that the proposal meets or exceeds every EMBO Fellowship evaluation benchmark.
+
