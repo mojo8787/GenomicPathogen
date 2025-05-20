@@ -149,12 +149,7 @@ Website: [https://almotasem-younis.netlify.app](https://almotasem-younis.netlify
 
 ## Citation
 
-If you use this dashboard or the underlying methodologies, please cite:
-
-```
-Younis, A.B. (2023). AI-Driven Genomic Surveillance and Mechanistic Inference of High-Biofilm MRSA Lineages 
-for Precision Antibiofilm Therapeutics. Journal of Bioinformatics and Genomic Epidemiology.
-```
+This is a proof-of-concept implementation for demonstration purposes. No formal citation is required at this time.
 
 ## License
 
