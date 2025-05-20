@@ -144,7 +144,7 @@ This dashboard is a proof-of-concept implementation based on the research propos
 
 This dashboard was developed by:
 
-**Dr. Almotasem Bellah Younis, PhD**  
+**Almotasem Bellah Younis, PhD**  
 Website: [https://almotasem-younis.netlify.app](https://almotasem-younis.netlify.app)
 
 ## Citation
