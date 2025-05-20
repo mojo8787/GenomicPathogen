@@ -1,6 +1,6 @@
 # EMBO Fellowship Criteria Alignment
 
-This document outlines how the MRSA Biofilm Surveillance Dashboard project aligns with EMBO Fellowship criteria and integrates with Prof. Papp's lab research focus.
+This document outlines how the "Mechanistic AI: Decoding Mobile Genetic Elements as Master Regulators of MRSA Biofilms for Precision Therapy" project aligns with EMBO Fellowship criteria and integrates with Prof. Papp's lab research focus.
 
 **Author**: Dr. Almotasem Bellah Younis, PhD | [Website](https://almotasem-younis.netlify.app)
 

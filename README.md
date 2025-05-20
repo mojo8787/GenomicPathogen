@@ -4,7 +4,7 @@
 
 ## Overview
 
-This Streamlit dashboard demonstrates a proof-of-concept implementation for the research proposal: "AI-Driven Genomic Surveillance and Mechanistic Inference of High-Biofilm MRSA Lineages for Precision Antibiofilm Therapeutics." The dashboard showcases key components from the proposal, focusing on genomic surveillance, predictive modeling, and therapeutic recommendations for high-biofilm MRSA strains.
+This Streamlit dashboard demonstrates a proof-of-concept implementation for the research proposal: "Mechanistic AI: Decoding Mobile Genetic Elements as Master Regulators of MRSA Biofilms for Precision Therapy." The dashboard showcases key components from the proposal, focusing on genomic surveillance, predictive modeling, and therapeutic recommendations for high-biofilm MRSA strains.
 
 The project is designed as a technical demonstration of the methodologies and approaches outlined in the research proposal, with specific alignment to Prof. Papp's work in genomic surveillance and antimicrobial resistance.
 

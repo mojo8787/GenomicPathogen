@@ -143,6 +143,6 @@ if uploaded_file is not None:
 st.markdown("---")
 st.markdown("""
 **Dashboard Author**: Dr. Almotasem Bellah Younis, PhD | [Website](https://almotasem-younis.netlify.app)  
-**Proposal**: AI-Driven Genomic Surveillance and Mechanistic Inference of High-Biofilm MRSA Lineages  
+**Proposal**: Mechanistic AI: Decoding Mobile Genetic Elements as Master Regulators of MRSA Biofilms for Precision Therapy  
 **Target Host Lab**: Prof. Balázs Papp's Group at HUN-REN BRC, Szeged
 """)
