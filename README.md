@@ -54,7 +54,12 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-The application will be available at http://localhost:5000
+The application will be available at http://localhost:8501
+
+### Streamlit Cloud Deployment
+
+This dashboard is also deployed on Streamlit Cloud and can be accessed at:
+[MRSA Biofilm Surveillance Dashboard](https://mrsa-biofilm-dashboard.streamlit.app)
 
 ## Project Structure
 
